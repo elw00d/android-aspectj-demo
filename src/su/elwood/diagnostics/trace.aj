@@ -18,7 +18,7 @@ aspect Trace {
     /**
      * Allows to measure and display time elapsed for methods execution
      */
-    private static final boolean TRACE_RETURNS = false;
+    private static final boolean TRACE_RETURNS = true;
 
 	Object around() : methodCalls() {
 		String threadName = Thread.currentThread().getName();

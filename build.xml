@@ -89,6 +89,15 @@
     <!-- version-tag: 1 -->
     <import file="${sdk.dir}/tools/ant/build.xml"/>
 
+    <target name="-pre-build">
+        <!-- Компилятор aspectj часто падает, если не делать удаление классов, и еще он
+             не распознает изменённые классы, собирая билд со старым номером ревизии -->
+        <echo message="Deleting classes and classes.old directories to invalidate AspectJ compiler state"/>
+        <echo message="You can remove this steps if AspectJ will be fixed"/>
+        <delete dir="bin\classes"/>
+        <delete dir="bin\classes.old"/>
+    </target>
+
     <!-- определяем classpath вот таким вот образом -->
     <target name="-pre-compile">
         <path id="project.all.jars.path">
@@ -110,8 +119,8 @@
     <target name="-post-compile">
         <property name="aop.output" value="bin/aop"/>
         <echo message="Weaving aspects to .class files before dex converts .class files to .dex file"/>
-        <iajc destDir="${aop.output}" Xlintwarnings="true" showWeaveInfo="true" target="1.5"
-         source="1.5">
+        <iajc destDir="${aop.output}" xnoinline="true" Xlintwarnings="true" showWeaveInfo="true" target="1.6"
+         source="1.6" debug="true">
             <argfiles>
                 <pathelement location="trace.lst"/>
             </argfiles>
@@ -121,8 +130,6 @@
             <classpath>
                 <pathelement location="${aspectj.home}/lib/aspectjrt.jar"/>
                 <fileset dir="libs" includes="*.jar"/>
-                <!--<fileset dir="${extensible.libs.classpath}" includes="*.jar"/>-->
-                <!--<path refid="android.target.classpath"/>-->
                 <fileset dir="${sdk.dir}\platforms\${target}\" includes="*.jar"/>
                 <fileset dir="${out.classes.absolute.dir}"/>
             </classpath>
